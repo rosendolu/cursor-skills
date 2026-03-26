@@ -35,7 +35,7 @@ Reference these skills in your Cursor project by placing them under `.cursor/ski
 Run the initializer to pull the latest templates from the GitHub repo and initialize OpenSpec:
 
 ```bash
-npx rosendo-skills init [targetDir]
+npx rosendo-skills init
 ```
 
 - If `targetDir` is omitted, the current directory is used.

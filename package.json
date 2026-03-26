@@ -1,6 +1,6 @@
 {
     "name": "rosendo-skills",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "npx initializer to pull Cursor skills/templates from rosendolu/cursor-skills",
     "license": "MIT",
     "type": "module",
