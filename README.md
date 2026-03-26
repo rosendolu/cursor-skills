@@ -29,3 +29,22 @@ Structured code review with severity grading (`🔴 Critical / 🟡 Major / 🔵
 ## Usage
 
 Reference these skills in your Cursor project by placing them under `.cursor/skills/` or pointing your AI assistant to the relevant `SKILL.md` file.
+
+## Bootstrap a project (npx)
+
+Run the initializer to pull the latest templates from the GitHub repo and initialize OpenSpec:
+
+```bash
+npx rosendo-skills init [targetDir]
+```
+
+- If `targetDir` is omitted, the current directory is used.
+- The initializer will create missing directories and overwrite same-named files.
+
+### Smoke test plan
+
+```bash
+mkdir -p /tmp/rosendo-skills-smoke && cd /tmp/rosendo-skills-smoke
+npx rosendo-skills init .
+ls -la .cursor .vscode docs openspec
+```
