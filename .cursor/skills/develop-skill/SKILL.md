@@ -44,7 +44,7 @@ This skill is used to implement a new change in this repo while enforcing:
    - `gh pr create --base main --head feature/<short-description> --title "<PR title>" --body "<PR body>"`
 3. Use a clear PR title derived from the user's request.
 4. If the PR is already open for the branch, reuse it and do not create a duplicate PR.
-5. **IMPORTANT — No "Made with cursor" text**: The PR title, body, commit messages, and any generated content must never contain any "Made with cursor", "Created by cursor", "Built with cursor", or similar branding phrases. Remove any auto-generated cursor attribution before finalizing the PR.
+5. **IMPORTANT — No "Made with cursor" text**: The PR title, body, and commit messages must never contain any "Made with cursor", "Created by cursor", "Built with cursor", or similar branding phrases. Remove any such auto-generated cursor attribution before finalizing the PR.
 
 ### Phase 4: Code review loop (must reference `code-review`)
 
