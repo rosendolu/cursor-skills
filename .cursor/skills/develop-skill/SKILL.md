@@ -20,7 +20,7 @@ This skill is used to implement a new change in this repo while enforcing:
    - `git switch main` (or `git checkout main`)
    - `git pull --ff-only origin main`
 2. Create a feature branch:
-   - Convert the user’s change description into a short slug (letters/numbers/hyphens only; no spaces).
+   - Convert the user's change description into a short slug (letters/numbers/hyphens only; no spaces).
    - Branch name format: `feature/<short-description>`
    - If the branch already exists locally or remotely, pick a unique suffix (e.g. `-2`, `-3`).
 3. Switch to the feature branch from `main`:
@@ -30,7 +30,7 @@ This skill is used to implement a new change in this repo while enforcing:
 ### Phase 2: Implement the change (single PR)
 
 1. Implement the requested change on the feature branch only.
-2. Do not start a second PR while this development cycle’s PR is open.
+2. Do not start a second PR while this development cycle's PR is open.
 3. Commit changes on the same branch (multiple commits are fine).
 4. Before opening the PR:
    - Confirm you are still on the same `feature/<short-description>` branch.
@@ -42,8 +42,9 @@ This skill is used to implement a new change in this repo while enforcing:
    - `git push -u origin HEAD`
 2. Open exactly one PR from the feature branch to `main` using GitHub CLI:
    - `gh pr create --base main --head feature/<short-description> --title "<PR title>" --body "<PR body>"`
-3. Use a clear PR title derived from the user’s request.
+3. Use a clear PR title derived from the user's request.
 4. If the PR is already open for the branch, reuse it and do not create a duplicate PR.
+5. **IMPORTANT — No "Made with cursor" text**: The PR title, body, and commit messages must never contain any "Made with cursor", "Created by cursor", "Built with cursor", or similar branding phrases. Remove any such auto-generated cursor attribution before finalizing the PR.
 
 ### Phase 4: Code review loop (must reference `code-review`)
 
@@ -55,7 +56,7 @@ This skill is used to implement a new change in this repo while enforcing:
    - Make fixes on the same feature branch.
    - Commit fixes.
    - Push updates to the same branch so the open PR reflects the changes.
-4. Only conclude after the PR’s review findings are addressed (at minimum: no remaining Critical/Suggestion/Nice-to-have items).
+4. Only conclude after the PR's review findings are addressed (at minimum: no remaining Critical/Suggestion/Nice-to-have items).
 
 ### Phase 5: Close-out
 
