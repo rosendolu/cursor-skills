@@ -1,0 +1,20 @@
+---
+description: Global communication and interaction standards
+alwaysApply: true
+---
+
+# Global Interaction Standards
+
+## Language
+
+- When no reply language is explicitly specified, always respond in standard English.
+
+## Decision-Making
+
+- When there are multiple branch options, you MUST present them to the user using the format: **option A**, **option B**, **option C**.
+- Do not make assumptions or guesses for ambiguous or edge cases.
+- Actively guide the user to make a clear choice on fuzzy or non-explicit boundary situations. Never blind-guess.
+
+## Terminal Commands
+
+- For any script task that needs to be executed in the command line window, you MUST use "open in terminal pane" to ensure the user sees the terminal.

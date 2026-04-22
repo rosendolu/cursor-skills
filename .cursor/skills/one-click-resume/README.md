@@ -32,23 +32,28 @@ Automatically fills job application forms on crypto exchange career pages, using
 ## Workflow Summary
 
 ```
-User provides resume path
+User provides resume PDF path
         ↓
-AI parses PDF with Pandoc MCP (convert-contents tool)
-  → Step 1: convert-contents with input_format="pdf", output_format="markdown", output_file="/tmp/resume.md"
-  → Step 2: Read /tmp/resume.md to get markdown content
-  → Step 3: Extract name, email, phone, GitHub, skills
-  → Fallback (if Pandoc fails): use pymupdf via python3 -c "import fitz; doc=fitz.open('path'); [print(p.get_text()) for p in doc]"
+AI verifies file exists
         ↓
-User selects exchanges
+AI converts PDF to Markdown (Pandoc MCP → /tmp/resume.md)
+  → Step 1: CallMcpTool convert-contents (input_format="pdf", output_format="markdown")
+  → Step 2: Read /tmp/resume.md
+  → Step 3: Extract name, email, phone, GitHub, LinkedIn, skills
+  → Fallback (if Pandoc fails): pymupdf via python3
+        ↓
+User selects exchanges (by name or number)
         ↓
 For each exchange:
   → AI navigates to career page
   → User manually logs in
-  → AI searches for dev positions
-  → AI fills form fields
+  → AI takes browser_snapshot to inspect form structure
+  → AI searches for dev positions (browser_fill + browser_click)
+  → AI opens application form
+  → AI auto-fills form fields with resume data
   → AI uploads resume PDF
-  → User manually clicks SUBMIT
+  → AI takes browser_snapshot to show user the filled form
+  → User manually reviews and clicks SUBMIT
         ↓
 AI generates application report
 ```
@@ -63,9 +68,11 @@ AI generates application report
 
 ## Troubleshooting
 
-| Problem                  | Solution                                               |
-| ------------------------ | ------------------------------------------------------ |
-| Upload button not found  | Try scrolling down; some platforms hide it             |
-| Form fields not filling  | Check if page uses React/Angular; selectors may differ |
-| Captcha appeared         | User must solve manually                               |
-| Page language unexpected | Adjust selectors for Chinese/Korean platforms          |
+| Problem                      | Solution                                                    |
+| ---------------------------- | ----------------------------------------------------------- |
+| PDF conversion failed         | Use pymupdf fallback (python3) instead of Pandoc MCP      |
+| Upload button not found       | Try scrolling down; some platforms hide it                  |
+| Form fields not filling       | Check if page uses React/Angular; selectors may differ      |
+| Captcha appeared              | User must solve manually                                    |
+| Page language unexpected      | Adjust selectors for Chinese/Korean platforms              |
+| Pandoc MCP not converting PDF | TeX Live not installed — use pymupdf fallback instead      |

@@ -68,35 +68,52 @@ Apply developer resumes to crypto exchanges using browser automation + human con
 
 ## Workflow
 
-### Step 1: Confirm Resume
+### Step 1: Confirm Resume Path
 
-Ask the user for the path to their resume PDF file. Confirm it exists.
+Ask the user for the path to their resume PDF file. Confirm it exists by checking the file.
 
-### Step 2: Parse Resume
+### Step 2: Convert PDF to Markdown
 
-Parse the PDF into structured text before filling forms.
+Use the Pandoc MCP to convert the PDF resume into a Markdown file for parsing.
 
-**2a. Try Pandoc MCP first:**
+**2a. Call Pandoc MCP `convert-contents`:**
 
-Use the Pandoc MCP `convert-contents` tool:
+Use the `CallMcpTool` tool to invoke the Pandoc MCP:
 
 ```
-convert-contents with input_file="<path to resume.pdf>", input_format="pdf", output_format="markdown", output_file="/tmp/resume.md"
+server: "user-pandoc"
+toolName: "convert-contents"
+arguments: {
+  input_file: "<path to resume.pdf>",
+  input_format: "pdf",
+  output_format: "markdown",
+  output_file: "/tmp/resume.md"
+}
 ```
 
-Then use the Read tool to read `/tmp/resume.md`.
+After the conversion completes, read `/tmp/resume.md` to get the resume content.
 
-> If Pandoc fails (tool returns an error), fall back to Step 2b automatically. This is expected — the Pandoc MCP often does not have PDF conversion (TeX Live) available.
+> **Note:** If Pandoc fails (TeX Live not installed), it will return an error. This is expected. The skill should automatically fall back to Step 2b. Do not give up — simply try the next fallback method.
 
 **2b. Fallback: pymupdf via python3:**
+
+If the Pandoc MCP conversion fails, use python3 with PyMuPDF to extract text:
 
 ```
 python3 -c "import fitz; doc = fitz.open('<path>'); [print(p.get_text()) for p in doc]"
 ```
 
-**2c. Extract key fields:**
+**2c. Extract Key Fields:**
 
-Parse the text/markdown content and extract: name, email, phone, LinkedIn URL, GitHub URL, current title, skills.
+Parse the markdown/text content and extract:
+- Full name
+- Email address
+- Phone number
+- Current job title
+- LinkedIn URL
+- GitHub URL
+- Key skills and technologies
+- Work experience summary
 
 ### Step 3: User Selects Exchanges
 
@@ -114,11 +131,11 @@ Use `browser_navigate` to open the exchange's career URL.
 
 Tell the user: "Please log in to [Exchange] manually now. I'll wait."
 
-Wait for user confirmation that they are logged in before proceeding.
+Wait for the user to confirm they are logged in before proceeding.
 
 #### 4c. Find Dev Positions
 
-Use `browser_click` and `browser_fill` to search for dev/engineer positions:
+Use `browser_snapshot` to inspect the page structure first. Then use `browser_fill` and `browser_click` to search for dev/engineer positions:
 
 - Look for search input with placeholder containing "search" or "job" or "职位"
 - Fill with "developer" or "engineer" or "backend" or "frontend"
@@ -129,31 +146,40 @@ Use `browser_click` and `browser_fill` to search for dev/engineer positions:
 
 Click on a relevant job listing. Then find and click the "Apply" or "申请" button.
 
-#### 4e. Auto-Fill Form
+#### 4e. Take Snapshot Before Filling
 
-Use `browser_fill` to fill in all available text fields with resume data:
+Before filling any form, use `browser_snapshot` to capture the current page structure. Identify all form fields, input selectors, file upload elements, and any pre-filled data (some platforms auto-fill name/email via LinkedIn login).
 
-- `name` / `first_name` + `last_name`: From parsed resume
+#### 4f. Auto-Fill Form
+
+Use `browser_fill_form` (preferred) or `browser_fill` for individual fields to fill in all available text fields with the parsed resume data:
+
+- `first_name` + `last_name`: Split from full name in resume
 - `email`: From parsed resume
 - `phone`: From parsed resume
 - `linkedin_url`: From parsed resume
 - `github_url`: From parsed resume
 - `website` / `portfolio`: If available
+- Any free-text fields (cover letter, "why this company"): Write 1-2 sentences based on resume content
 
-#### 4f. Upload Resume
+#### 4g. Upload Resume
 
 Use `browser_upload` on the file input element:
 
 - Common selectors: `input[type=file]`, `[name="resume"]`, `[name="cv"]`
-- Upload the PDF file
+- Upload the PDF resume file
 
-#### 4g. Confirm with User
+If `browser_upload` is not available, use `browser_fill` on the file input by passing the file path directly.
 
-Tell the user: "Form filled. Please review and click SUBMIT manually."
+#### 4h. Review and Confirm with User
 
-Wait for the user to confirm submission before proceeding to the next exchange.
+Take a final `browser_snapshot` to show the user the filled form. Then say:
 
-#### 4h. Handle Exceptions
+> "Form is filled. Please review all fields — especially name, email, phone, and the uploaded resume file. When you're ready, click **SUBMIT** manually."
+
+Wait for the user's confirmation that they have submitted before moving to the next exchange.
+
+#### 4i. Handle Exceptions
 
 - If CAPTCHA appears: Tell the user and wait for them to solve it
 - If form structure is unexpected: Take screenshot, report the issue, skip this exchange
@@ -228,11 +254,13 @@ button:contains("提交")
 
 1. **NEVER submit for the user** — only fill the form, user must click submit
 2. **Wait for login confirmation** before auto-filling anything
-3. **Take screenshot** before each major step to verify the page state
+3. **Always take browser_snapshot before filling** to understand the form structure
 4. **Handle captchas** by alerting the user and waiting
 5. **Report honestly** — if a form can't be filled, say so and skip it
 6. **Respect rate limits** — add 5s delay between exchanges
 7. **Language awareness** — some exchanges (HTX, Gate.io, Upbit) have Chinese/Korean UIs; adapt field selectors accordingly
+8. **Try Pandoc MCP first** for PDF conversion; if it fails, fall back to pymupdf — do not give up after one failure
+9. **Show snapshot before submit** — let the user see the filled form before they click submit
 
 ## Tips
 
