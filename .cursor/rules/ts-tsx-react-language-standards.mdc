@@ -11,16 +11,16 @@ alwaysApply: true
 
 ```ts
 // ✅ GOOD
-String(a) === String(b)
+String(a) === String(b);
 
 // ❌ BAD (type-coercion surprises, inconsistent comparisons)
-a == b
+a == b;
 ```
 
 ## 2) Types must live in a dedicated `types.ts` at module level
 
 - Type definitions must be extracted into **module-level** `types.ts`.
-- Components import types from that module file.
+- Components import types from that module file using relative paths.
 
 Example layout:
 
@@ -33,6 +33,7 @@ moduleA/
 ## 3) Constants must live in a dedicated `constant.ts` at module level
 
 - Constants must be defined in **module-level** `constant.ts`.
+- Components import constants from that module file using relative paths.
 
 Example layout:
 
@@ -50,41 +51,44 @@ moduleA/
 ```tsx
 // ✅ GOOD
 export function UserCard(props: Props) {
-  return <div />;
+    return <div />;
 }
 
 // ❌ BAD
 export const UserCard = (props: Props) => {
-  return <div />;
+    return <div />;
 };
 ```
 
 ## 5) React props typing pattern
 
-- Props type must be imported from the module `types.ts`.
+- Props type must be imported from the module `types.ts` using a relative path.
 - Component signature must be `function A(props: Tprops) { ... }`
 - Destructure props **inside** the function body.
 
 ```tsx
-import type Tprops from '../types.ts'
+import type Tprops from '../types.ts';
 
 export function A(props: Tprops) {
-  const { id, name } = props
-  return <div>{name}</div>
+    const { id, name } = props;
+    return <div>{name}</div>;
 }
 ```
 
-## 6) Imports must use relative paths
+## 6) All imports must use relative paths
 
-- Component imports must use **relative paths only** (no absolute/alias imports).
+- **All** import statements (types, constants, components, utilities) must use **relative paths only**.
+- No absolute imports, no path aliases (e.g. `@/`).
 
 ```ts
-// ✅ GOOD
-import type Tprops from '../types.ts'
+// ✅ GOOD — relative path
+import type Tprops from '../types.ts';
+import { MAX_RETRY_TIMES } from '../constant.ts';
+import { Button } from '../components/Button.tsx';
 
-// ❌ BAD
-import type Tprops from 'moduleA/types'
-import type Tprops from '@/moduleA/types'
+// ❌ BAD — absolute or alias import (do NOT use these)
+import type Tprops from 'moduleA/types';
+import type Tprops from '@/moduleA/types';
 ```
 
 ## 7) No magic numbers (define in `constant.ts`)
@@ -94,7 +98,7 @@ import type Tprops from '@/moduleA/types'
 
 ```ts
 // ✅ GOOD
-export const MAX_RETRY_TIMES = 3
+export const MAX_RETRY_TIMES = 3;
 
 // ❌ BAD
 for (let i = 0; i < 3; i++) {}
